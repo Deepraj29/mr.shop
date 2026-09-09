@@ -58,13 +58,13 @@ Four clean-start demo scripts are in [demo/conversations.md](demo/conversations.
 
 ## Intent and entities
 
-The hybrid classifier first uses deterministic rules for explicit commands, then uses `all-MiniLM-L6-v2` embeddings and cosine similarity against representative examples for looser phrasing. If the embedding package is unavailable, it falls back to local hashed text vectors so the prototype remains runnable offline. It normalizes `blk`, `gry`, `tee`, and `tshirt`; extracts category, color, size, budget, occasion, and style; and responds with a clarification prompt for low confidence. Purchase requests missing size or budget ask only for the missing information. A bare "Find those" with no prior item asks which item is meant.
+Intent classification uses a lightweight rule-based classifier. The Track A assignment permits rule-based or embedding-based intent classification; this implementation prefers rules for lower memory usage, faster startup, and no model download—suitable for constrained free hosting (for example a 512 MB Render instance). Priority is booking → wardrobe upload → product purchase → styling advice → general. It normalizes `blk`, `gry`, `tee`, and `tshirt`; extracts category, color, size, budget, occasion, and style; and responds with a clarification prompt for low confidence. Purchase requests missing size or budget ask only for the missing information. A bare "Find those" with no prior item asks which item is meant.
 
 ## Design trade-offs and scaling
 
 SQLite persistence keeps user context and wardrobe items in local relational tables without adding a database dependency. Structured memory is more reliable for reusable facts than raw history alone. Rule-based classification is fast, deterministic, cheap, and testable; its language coverage is intentionally limited.
 
-To scale, retain the `IntentClassifier` interface and add entries to the orchestrator registry: **intent → handler → required entities → service**. The embedding classifier can be upgraded to a domain-tuned model, while deterministic services remain in control. Future intents can include order status, returns, outfit history, analytics, price alerts, and trend discovery without rewriting the conversation pipeline.
+To scale, retain the `IntentClassifier` interface and add entries to the orchestrator registry: **intent → handler → required entities → service**. A future classifier implementation can plug in behind the same interface while deterministic services remain in control. Future intents can include order status, returns, outfit history, analytics, price alerts, and trend discovery without rewriting the conversation pipeline.
 
 For production, protect user data, separate authentication, validate all fields, use idempotency for mutations, rate-limit requests, log classification outcomes rather than sensitive raw chats where possible, and monitor classification/topic-switch failures.
 

@@ -1,0 +1,8 @@
+{
+  "products": [
+    {"name": "Grey Tailored Trousers", "price": 2499, "size": "L"},
+    {"name": "Slim Grey Trousers", "price": 2799, "size": "L"},
+    {"name": "Classic Black Blazer", "price": 4499, "size": "L"}
+  ],
+  "stylist_slots": ["Tomorrow 5:00 PM", "Tomorrow 7:00 PM"]
+}
